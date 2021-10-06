@@ -7,14 +7,20 @@ output: word_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 #### Read table from GitHub repository ####
 cancer_data <-read.csv("https://raw.githubusercontent.com/Doriasamp/M362/main/cancer_reg.csv", header = TRUE)
 
+<<<<<<< HEAD
 #### Makes chuncks visivle/invisible   ####
 #### 1 = visible, 0 = invisible        ####
 
 #### Importan Variables and Vectors    ####
 ColumNames <- c("Poverty %","Avg Household", "Pvt Cov %")
+=======
+#### Makes chuncks visible/invisible   ####
+x <- 0 # 1 = visible, 0 = invisible
+>>>>>>> 969d4a553d4fdcd97c5df18499c15298c3968c9d
 ```
 
 # Project
