@@ -23,8 +23,15 @@ ColumNames <- c("Poverty %","Avg Household", "Pvt Cov %")
 #Find Outliers
 boxplot(cancer_data$povertyPercent,cancer_data$AvgHouseholdSize,
         cancer_data$PctPrivateCoverage, names = ColumNames, varwidth = TRUE, horizontal = FALSE)
-ColumNames[1]
-poverty_out=boxplot(cancer_data$povertyPercent)$out
+```
+
+
+### Write something about it
+
+
+```{r, echo=FALSE}
+#Removing outliers from Poverty Percent data
+poverty_out <- boxplot(cancer_data$povertyPercent)$out
 poverty_rows=which(cancer_data$povertyPercent%in%poverty_out)
 poverty_rows
 ```
