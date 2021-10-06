@@ -8,14 +8,23 @@ output: word_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 #### Read table from GitHub repository ####
-cancer_reg <-read.csv("https://raw.githubusercontent.com/Doriasamp/M362/main/cancer_reg.csv", header = TRUE)
+cancer_data <-read.csv("https://raw.githubusercontent.com/Doriasamp/M362/main/cancer_reg.csv", header = TRUE)
 
 #### Makes chuncks visivle/invisible   ####
-x <- 0 # 1 = visible, 0 = invisible
+#### 1 = visible, 0 = invisible        ####
+
+#### Importan Variables and Vectors    ####
+ColumNames <- c("Poverty %","Avg Household", "Pvt Cov %")
 ```
 
 # Project
 
-```{r , echo=x}
-#Start here
+```{r , echo=1}
+#Find Outliers
+boxplot(cancer_data$povertyPercent,cancer_data$AvgHouseholdSize,
+        cancer_data$PctPrivateCoverage, names = ColumNames, varwidth = TRUE, horizontal = FALSE)
+ColumNames[1]
+poverty_out=boxplot(cancer_data$povertyPercent)$out
+poverty_rows=which(cancer_data$povertyPercent%in%poverty_out)
+poverty_rows
 ```
