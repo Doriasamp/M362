@@ -11,33 +11,345 @@ knitr::opts_chunk$set(echo = TRUE)
 #### Read table from GitHub repository ####
 cancer_data <-read.csv("https://raw.githubusercontent.com/Doriasamp/M362/main/cancer_reg.csv", header = TRUE)
 
-<<<<<<< HEAD
+
 #### Makes chuncks visivle/invisible   ####
 #### 1 = visible, 0 = invisible        ####
 
 #### Importan Variables and Vectors    ####
-ColumNames <- c("Poverty %","Avg Household", "Pvt Cov %")
-=======
+ColumNames <- c("Poverty %","AvgHoushol", "Pvt Cov %", "Incidence", "Median Income", "Death Rate")
+
 #### Makes chuncks visible/invisible   ####
 x <- 0 # 1 = visible, 0 = invisible
->>>>>>> 969d4a553d4fdcd97c5df18499c15298c3968c9d
+#### Color for plots
+colplot <-"lightblue4"
 ```
 
 # Project
 
-```{r , echo=1}
-#Find Outliers
-boxplot(cancer_data$povertyPercent,cancer_data$AvgHouseholdSize,
-        cancer_data$PctPrivateCoverage, names = ColumNames, varwidth = TRUE, horizontal = FALSE)
-```
+```{r , echo=x}
+#Find Outliers from boxplot
+boxplot(cancer_data$povertyPercent,cancer_data$AvgHouseholdSize, names = ColumNames[1:2], horizontal = TRUE, col = colplot)
+boxplot(cancer_data$PctPrivateCoverage,cancer_data$incidenceRate, names = ColumNames[3:4], horizontal = TRUE, col = colplot)
+boxplot(cancer_data$medIncome,names = ColumNames[5], horizontal = TRUE, col = colplot, )
 
+```
 
 ### Write something about it
+We are going to remove outliers
 
 
-```{r, echo=FALSE}
-#Removing outliers from Poverty Percent data
-poverty_out <- boxplot(cancer_data$povertyPercent)$out
+
+```{r include=FALSE}
+#Removing outliers
+
+y <- 0 #turn off outliers graphs, there are too many of them
+
+poverty_out=boxplot(cancer_data$povertyPercent, plot = y)$out
 poverty_rows=which(cancer_data$povertyPercent%in%poverty_out)
-poverty_rows
+
+cd2 = cancer_data[-poverty_rows,]
+
+household_out= boxplot(cd2$AvgHouseholdSize, plot = y)$out
+household_rows=which(cd2$AvgHouseholdSize%in%household_out)
+
+cd3 = cd2[-household_rows,]
+
+private_out = boxplot(cd3$PctPrivateCoverage, plot = y)$out
+private_rows = which(cd3$PctPrivateCoverage%in%private_out)
+
+cd4 = cd3[-private_rows,]
+
+boxplot(cd4$povertyPercent, plot = y)$out
+#11 outliers in poverty percentage after first removal
+poverty_out2 = boxplot(cd4$povertyPercent, plot = y)$out
+poverty_rows2 = which(cd4$povertyPercent%in%poverty_out2)
+
+cd5 = cd4[-poverty_rows2,]
+
+boxplot(cd4$AvgHouseholdSize, plot = y)$out
+#24 outliers in household size after first removal
+household_out2 = boxplot(cd4$AvgHouseholdSize, plot = y)$out
+household_rows2 = which(cd4$AvgHouseholdSize%in%household_out2)
+
+cd6=cd5[-household_rows2,]
+
+boxplot(cd4$PctPrivateCoverage, plot = y)$out
+#0 outliers in private coverage percentage after first removal
+
+boxplot(cd6$povertyPercent, plot = y)$out
+#0 outliers in poverty percentage after second removal
+
+boxplot(cd6$AvgHouseholdSize, plot = y)$out
+#23 outliers in household size after second removal
+household_out3=boxplot(cd6$AvgHouseholdSize, plot = y)$out
+household_rows3=which(cd6$AvgHouseholdSize%in%household_out3)
+
+cd7=cd6[-household_rows3,]
+dim(cd7)
+
+boxplot(cd7$AvgHouseholdSize, plot = y)$out
+#22 outliers in household size after third removal
+household_out4 = boxplot(cd7$AvgHouseholdSize, plot = y)$out
+household_rows4 = which(cd7$AvgHouseholdSize%in%household_out4)
+
+cd8=cd7[-household_rows4,]
+
+boxplot(cd8$AvgHouseholdSize, plot = y)$out
+#0 outliers in household size after fourth removal
+
+income_out=boxplot(cd8$medIncome, plot = y)$out
+income_rows=which(cd8$medIncome%in%income_out)
+
+cd9=cd8[-income_rows,]
+
+irate_out = boxplot(cd8$incidenceRate, plot = y)$out
+irate_rows = which(cd8$incidenceRate%in%irate_out)
+
+cd10 = cd9[-irate_rows,]
+
+boxplot(cd10$medIncome, plot = y)$out
+#14 outliers left after first removal
+
+boxplot(cd10$incidenceRate, plot = y)$out
+#82 outliers left after first removal
+
+income_out2 = boxplot(cd10$medIncome, plot = y)$out
+income_rows2 = which(cd10$medIncome%in%income_out2)
+
+irate_out2 = boxplot(cd10$incidenceRate, plot = y)$out
+irate_rows2 = which(cd10$incidenceRate%in%irate_out2)
+
+cd11 = cd10[-income_rows2,]
+
+cd12 = cd11[-irate_rows2,]
+
+boxplot(cd12$medIncome, plot = y)$out
+#1 outlier left after second removal
+
+boxplot(cd12$incidenceRate, plot = y)$out
+#84 outliers left after second removal
+
+income_out3 = boxplot(cd12$medIncome, plot = y)$out
+income_rows3 = which(cd12$medIncome%in%income_out3)
+
+irate_out3 = boxplot(cd12$incidenceRate, plot = y)$out
+irate_rows3 = which(cd12$incidenceRate%in%irate_out3)
+
+cd13=cd12[-income_rows3,]
+
+cd14=cd13[-irate_rows3,]
+
+boxplot(cd14$medIncome, plot = y)$out
+#3 outliers left after third removal
+
+boxplot(cd14$incidenceRate, plot = y)$out
+#76 outliers left after third removal
+
+income_out4=boxplot(cd14$medIncome, plot = y)$out
+income_rows4= which(cd14$medIncome%in%income_out4)
+
+irate_out4 = boxplot(cd14$incidenceRate, plot = y)$out
+irate_rows4 = which(cd14$incidenceRate%in%irate_out4)
+
+cd15=cd14[-income_rows4,]
+
+cd16=cd15[-irate_rows4,]
+
+boxplot(cd16$incidenceRate, plot = y)$out
+#46 outliers left after fourth removal
+
+boxplot(cd16$medIncome, plot = y)$out
+#3 outliers left after fourth removal
+
+irate_out5 = boxplot(cd16$incidenceRate, plot = y)$out
+irate_rows5 = which(cd16$incidenceRate%in%irate_out5)
+
+income_out5 = boxplot(cd16$medIncome, plot = y)$out
+income_rows5 = which(cd16$medIncome%in%income_out5)
+
+cd17 = cd16[-irate_rows5,]
+
+cd18 = cd17[-income_rows5,]
+
+boxplot(cd18$medIncome, plot = y)$out
+#4 outliers left after fifth removal
+
+boxplot(cd18$incidenceRate, plot = y)$out
+#10 outliers left afer fifth removal
+
+income_out6 = boxplot(cd18$medIncome, plot = y)$out
+income_rows6 = which(cd18$medIncome%in%income_out6)
+
+
+irate_out6 = boxplot(cd18$incidenceRate, plot = y)$out
+irate_rows6 = which(cd18$incidenceRate%in%irate_out6)
+
+cd19=cd18[-income_rows6,]
+
+cd20=cd19[-irate_rows6,]
+
+boxplot(cd20$medIncome, plot = y)$out
+#0 outliers remaining after sixth removal
+
+boxplot(cd20$incidenceRate, plot = y)$out
+#12 outliers remaining after sixth removal
+
+irate_out7 = boxplot(cd20$incidenceRate, plot = y)$out
+irate_rows7 = which(cd20$incidenceRate%in%irate_out7)
+
+
+cd21=cd20[-irate_rows7,]
+
+boxplot(cd21$incidenceRate, plot = y)$out
+#4 outliers left after seventh removal
+
+irate_out8 = boxplot(cd21$incidenceRate, plot = y)$out
+irate_rows8 = which(cd21$incidenceRate%in%irate_out8)
+
+cd22=cd21[-irate_rows8,]
+
+boxplot(cd22$incidenceRate, plot = y)$out
+#1 outlier left after eigth removal
+
+irate_out9 = boxplot(cd22$incidenceRate, plot = y)$out
+irate_rows9 = which(cd22$incidenceRate%in%irate_out9)
+
+cd23=cd22[-irate_rows9,]
+
+boxplot(cd23$incidenceRate, plot = y)$out
+#2 outliers left after ninth removal
+
+irate_out10 = boxplot(cd23$incidenceRate, plot = y)$out
+irate_rows10 = which(cd23$incidenceRate%in%irate_out10)
+
+cd24=cd23[-irate_rows10,]
+
+boxplot(cd24$incidenceRate, plot = y)$out
+#0 outliers left after tenth removal
+
+boxplot(cd24$povertyPercent,cd24$AvgHouseholdSize,cd24$medIncome,
+        cd24$incidenceRate,cd24$PctPrivateCoverage, plot = y)$out
+#appears there are outliers in poverty, household, and pctPC
+
+boxplot(cd24$povertyPercent, plot = y)$out
+#2 outliers in povertyPCT
+
+boxplot(cd24$AvgHouseholdSize, plot = y)$out
+#11 outliers in household size
+
+boxplot(cd24$PctPrivateCoverage, plot = y)$out
+#1 outlier in pctPC
+
+poverty_out3 = boxplot(cd24$povertyPercent, plot = y)$out
+poverty_rows3 = which(cd24$povertyPercent%in%poverty_out3)
+
+household_out5 = boxplot(cd24$AvgHouseholdSize, plot = y)$out
+household_rows5 = which(cd24$AvgHouseholdSize%in%household_out5)
+
+private_out2 = boxplot(cd24$PctPrivateCoverage, plot = y)$out
+private_rows2 = which(cd24$PctPrivateCoverage%in%private_out2)
+
+cd25=cd24[-poverty_rows3,]
+
+cd26=cd25[-household_rows5,]
+
+cd27=cd26[-private_rows2,]
+
+boxplot(cd27$povertyPercent, plot = y)$out
+#0 outliers in povertyPCT
+
+
+boxplot(cd27$AvgHouseholdSize, plot = y)$out
+#11 outliers in household size
+#same values as earlier -> check household_out5 for error
+
+boxplot(cd27$PctPrivateCoverage, plot = y)$out
+#0 outliers in pctPC
+
+household_out6 = boxplot(cd27$AvgHouseholdSize, plot = y)$out
+household_rows6 = which(cd27$AvgHouseholdSize%in%household_out6)
+
+cd28=cd27[-household_rows6,]
+
+boxplot(cd28$AvgHouseholdSize, plot = y)$out
+#0 outliers left in average household size
+
+boxplot(cd28$povertyPercent,cd28$AvgHouseholdSize,cd28$medIncome,
+        cd28$incidenceRate,cd28$PctPrivateCoverage, plot = y)$out
+#all outliers removed from the predictor variables
+
 ```
+
+
+
+```{r,echo = x}
+boxplot(cd28$povertyPercent,cd28$AvgHouseholdSize, names = ColumNames[1:2], horizontal = TRUE, col = colplot)
+boxplot(cd28$PctPrivateCoverage,cd28$incidenceRate, names = ColumNames[3:4], horizontal = TRUE, col = colplot)
+boxplot(cd28$medIncome, name = ColumNames[5], horizontal = TRUE, col = colplot, ylab = ColumNames[5])
+
+#dataframe renamed for clarity
+newcancer_data <- cd28
+```
+### We removed all of the 447 outliers from dataset!
+
+
+```{r, echo = x}
+### RUN THIS CHUNK ONLY AFTER PRIOR CHUNKS ARE RAN ###
+#removes variables we don't need anymore
+rm(cancer_data,cd2,cd3,cd4,cd5,cd6,cd7,cd8,cd9,cd10,cd11,cd12,cd13,cd14,cd15,cd16,cd17,cd18,cd19,cd20,cd21,cd22,cd23,cd24,cd25,cd26,cd27,cd28)
+```
+
+# Plots between predictors and death rate with their respective correlation coefficients
+We need to write something underneath each of the plots
+
+
+```{r, echo = x}
+plot(newcancer_data$povertyPercent,newcancer_data$TARGET_deathRate, xlab = ColumNames[1], ylab = ColumNames[6],col = colplot, pch =16 )
+#appears to be a moderate positive linear association
+cor(newcancer_data$povertyPercent,newcancer_data$TARGET_deathRate)
+# r = 0.4530695
+```
+### Write something here about this
+
+
+
+
+```{r, echo = x}
+plot(newcancer_data$AvgHouseholdSize,newcancer_data$TARGET_deathRate, xlab = ColumNames[2], ylab = ColumNames[6],col = colplot, pch =16)
+#appears to be a moderate positive linear association
+cor(newcancer_data$povertyPercent,newcancer_data$TARGET_deathRate)
+# r = 0.155252
+```
+### Write something here about this
+
+
+
+```{r, echo = x}
+plot(newcancer_data$PctPrivateCoverage,newcancer_data$TARGET_deathRate, xlab = ColumNames[3], ylab = ColumNames[6],col = colplot, pch =16)
+#appears to be a moderate positive linear association
+cor(newcancer_data$PctPrivateCoverage,newcancer_data$TARGET_deathRate)
+# r = -0.4569882
+```
+### Write something here about this
+
+
+
+```{r, echo = x}
+plot(newcancer_data$medIncome,newcancer_data$TARGET_deathRate, xlab = ColumNames[4], ylab = ColumNames[6],col = colplot, pch =16)
+#appears to be a moderate positive linear association
+cor(newcancer_data$medIncome,newcancer_data$TARGET_deathRate)
+# r = -0.4461167
+```
+### Write something here about this
+
+
+
+```{r, echo = x}
+plot(newcancer_data$incidenceRate,newcancer_data$TARGET_deathRate, xlab = ColumNames[5], ylab = ColumNames[6],col = colplot, pch =16)
+#appears to be a moderate positive linear association
+cor(newcancer_data$incidenceRate,newcancer_data$TARGET_deathRate)
+# r = 0.3519352
+```
+### Write something here about this
+
+
