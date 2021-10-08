@@ -9,10 +9,10 @@ output: word_document
 knitr::opts_chunk$set(echo = TRUE)
 
 #### Read table from GitHub repository ####
-cancer_data <-read.csv("https://raw.githubusercontent.com/Doriasamp/M362/main/cancer_reg.csv", header = TRUE)
+cancer_data <-read.csv("https://raw.githubusercontent.com/Doriasamp/M362/main/cancer_DFwCat.csv", header = TRUE)
 
 
-#### Makes chuncks visivle/invisible   ####
+#### Makes chuncks visible/invisible   ####
 #### 1 = visible, 0 = invisible        ####
 
 #### Importan Variables and Vectors    ####
@@ -28,7 +28,7 @@ colplot <-"lightblue4"
 
 ```{r , echo=x}
 #Find Outliers from boxplot
-boxplot(cancer_data$povertyPercent,cancer_data$AvgHouseholdSize, names = ColumNames[1:2], horizontal = TRUE, col = colplot)
+boxplot(cancer_data$povertyPercent, cancer_data$AvgHouseholdSize, names = ColumNames[1:2], horizontal = TRUE, col = colplot)
 boxplot(cancer_data$PctPrivateCoverage,cancer_data$incidenceRate, names = ColumNames[3:4], horizontal = TRUE, col = colplot)
 boxplot(cancer_data$medIncome,names = ColumNames[5], horizontal = TRUE, col = colplot)
 
@@ -317,7 +317,7 @@ cor(newcancer_data$povertyPercent,newcancer_data$TARGET_deathRate)
 ```{r, echo = x}
 plot(newcancer_data$AvgHouseholdSize,newcancer_data$TARGET_deathRate, xlab = ColumNames[2], ylab = ColumNames[6],col = colplot, pch =16)
 #appears to be a moderate positive linear association
-cor(newcancer_data$povertyPercent,newcancer_data$TARGET_deathRate)
+cor(newcancer_data$AvgHouseholdSize,newcancer_data$TARGET_deathRate)
 # r = 0.155252
 ```
 ### Write something here about this
