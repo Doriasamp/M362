@@ -16,7 +16,7 @@ cancer_data <-read.csv("https://raw.githubusercontent.com/Doriasamp/M362/main/ca
 #### 1 = visible, 0 = invisible        ####
 
 #### Importan Variables and Vectors    ####
-ColumNames <- c("Poverty %","AvgHoushol", "Pvt Cov %", "Incidence", "Median Income", "Death Rate")
+ColumNames <- c("Poverty %","AvgHoushol", "Pvt Cov %", "Incidence", "Median Income $", "Death Rate")
 
 #### Makes chuncks visible/invisible   ####
 x <- 0 # 1 = visible, 0 = invisible
@@ -30,7 +30,7 @@ colplot <-"lightblue4"
 #Find Outliers from boxplot
 boxplot(cancer_data$povertyPercent, cancer_data$AvgHouseholdSize, names = ColumNames[1:2], horizontal = TRUE, col = colplot)
 boxplot(cancer_data$PctPrivateCoverage,cancer_data$incidenceRate, names = ColumNames[3:4], horizontal = TRUE, col = colplot)
-boxplot(cancer_data$medIncome,names = ColumNames[5], horizontal = TRUE, col = colplot)
+boxplot(cancer_data$medIncome,names = ColumNames[5], horizontal = TRUE, ylab = ColumNames[5],  col = colplot)
 
 ```
 
@@ -352,18 +352,18 @@ cor(newcancer_data$incidenceRate,newcancer_data$TARGET_deathRate)
 ```
 ### Write something here about this
 
-### We have randomly 80% of rows from our dataframe for a total of 1723 data. Those data are now parts of a Train dataset we will use to perform regression analysis. At the same time we used the remaining 431 data for testing.
+### There are 2154 rows in our dataframe. We have randomly select 80% of rows from our dataframe for a total of 1723 data. Those data are now parts of a Train dataset we will use to perform regression analysis. At the same time we used the remaining 431 data for testing.
 
 ### Created two .txt files with data formatted as table. Uploaded on GitHub. This RMarkdown reads data directly from Github repository
 
 ```{r, echo = x}
-Traincancer_data <-read.table("https://raw.githubusercontent.com/Doriasamp/M362/main/Traincancer_data.txt", header = TRUE)
-Testcancer_data <-read.table("https://raw.githubusercontent.com/Doriasamp/M362/main/Testcancer_data", header = TRUE)
+Traincancer_data <-read.table("https://raw.githubusercontent.com/Doriasamp/M362/main/TrainCancerData.txt", header = TRUE)
+Testcancer_data <-read.table("https://raw.githubusercontent.com/Doriasamp/M362/main/TestCancerData.txt", header = TRUE)
 ```
 
 ## Now we are creating a multiple linear regression model to predict cancer death rate using our predictors
 
 ```{r, echo = x}
-model1 <-lm(Traincancer_data$TARGET_deathRate~Traincancer_data$povertyPercent+Traincancer_data$AvgHouseholdSize+Traincancer_data$PctPrivateCoverage+Traincancer_data$incidenceRate+Traincancer_data$medIncome, data = Traincancer_data)
+model1 <-lm(Traincancer_data$TARGET_deathRate ~ Traincancer_data$povertyPercent + Traincancer_data$AvgHouseholdSize + Traincancer_data$PctPrivateCoverage + Traincancer_data$incidenceRate+Traincancer_data$medIncome +  as.factor(Traincancer_data$Region.CAT.), data = Traincancer_data)
 summary.lm(model1, digits = 4, symbolic.cor = TRUE)
 ```
