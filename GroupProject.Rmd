@@ -365,5 +365,125 @@ Testcancer_data <-read.table("https://raw.githubusercontent.com/Doriasamp/M362/m
 
 ```{r, echo = x}
 model1 <-lm(Traincancer_data$TARGET_deathRate ~ Traincancer_data$povertyPercent + Traincancer_data$AvgHouseholdSize + Traincancer_data$PctPrivateCoverage + Traincancer_data$incidenceRate+Traincancer_data$medIncome +  as.factor(Traincancer_data$Region.CAT.), data = Traincancer_data)
-summary.lm(model1)
+summary.lm(model1, digits = 4, symbolic.cor = TRUE)
+```
+
+# Multiple Regression Model: Checking Assumptions
+
+## Check Assumption 1 and 2: Check mean of error is zero, and check that the errors have the same variance given any combination of values of predictors, in doing so we plot residual plots:
+```{r, echo = x}
+#Errors vs y-hat
+plot(model1$fitted.values, model1$residuals);abline(0,0)
+#Errors vs predictors
+plot(Traincancer_data$povertyPercent, model1$residuals);abline(0,0)
+plot(Traincancer_data$AvgHouseholdSize, model1$residuals);abline(0,0)
+plot(Traincancer_data$PctPrivateCoverage, model1$residuals);abline(0,0)
+plot(Traincancer_data$incidenceRate, model1$residuals);abline(0,0)
+plot(Traincancer_data$medIncome, model1$residuals);abline(0,0)
+```
+### Assumption 1 conclusions: All the above residual plots are approximately symmetric around x-axis. The point look random and not patterns seen. So the assumption  that mean of error is zero is satified.
+### Assumption 2 conclusion: All residuals plot have an approximately horizontal band around x axis. therefore we can say that the error variance is constant for all different value combinations of predictors.
+
+## Check Assumption 3: For any given set of predictor variables, the error is normally distributed, thus response variable y is normally distributed as well. We plot the qqnorm graph.
+```{r, echo = x}
+#Plot qqnorm graph
+qqnorm(model1$residuals)
+```
+### Assumption 3 conclusions: The qqplot of residuals looks approximately linear. Therefore the residuals of the errors are normally distributed.
+
+## Check Assumption 4: The observations of the response variable are independent from one another. Observations are not correlated. We use either the DW test value or the p-value.
+```{r, echo = x}
+# We nee the lmtestpackage to use the dwtest() function
+# load the package 
+require(lmtest)
+dwtest(model1, alternative = "two.sided")
+```
+### Assumption 4 conclusions: The p-value is greater than 0.05 (0.9512 > 0.05) so we fail to reject H0: "Independent errors". Therefore we will take the assumption as satisfied.
+
+### We still don't know how to check the 5th assumption: None of the predictors are constant and there are no exact linear relationships among predictors.
+
+### Assuming all the multiple linear regression assumptions are satisfied. We can perform the individual t-test for each individual predictor
+
+```{r, echo = x}
+summary(model1)
+```
+### In the above output we can see that the individual t-values of, 'AvgHouseholdSize', 'PctPrivateCoverage', 'incidenceRate', and 'medIncome' are less than 0.05. So they are useful predictor variables for colGPA
+### However, 'povertyPercent' predictor has a value of 0.6, greater than 0.05 so is not a useful predictor variable to predict the death rate.
+
+###Lets create a new model without ACT variable and check which model is better, the one with 'povertyPercent' variable (model1), or the one without ACT variable (model2). We will perform an AIC (Alike Information Criterion) test, where the smaller AIC is preferred.
+```{r, echo = x}
+model2 = lm(Traincancer_data$TARGET_deathRate ~ Traincancer_data$AvgHouseholdSize +            Traincancer_data$PctPrivateCoverage + Traincancer_data$incidenceRate + Traincancer_data$medIncome, data = Traincancer_data)
+AIC(model1)
+AIC(model2)
+```
+### The model 2 has a lower AIC score, therefore we are going to eliminate the 'povertyPercent' predictor variables from our model.
+```{r, echo = x}
+# pass model 2 under ImprovedModel
+ImprovedModel = model2
+```
+
+
+#Check prediction accuracy for the improved model.
+
+###We need first to predict the response variable value using a new dataset, which is the TestCancerData.txt dataset that is in the GitHub repository. Then we will use the MAPE, Mean Absolute Percentage Error (MAPE)
+
+```{r, echo = x}
+#When we predict we pass only the predictor variable in the 'Traincancer_data' dataset as a data.frame(). Then the model will predict the response variable value.
+
+# Column16=AvgHouseholdSize, Column26=PctPrivateCoverage, Column4=incidenceRate, Column5=medIncome
+#For convenience I'm going to create 2 new data frame for Train and Test where
+#the dependent variable is first column and AvgHouseholdSize, PctPrivateCoverage, incidenceRate, 
+#and medIncome are respectively the 2nd, 3rd, 4th, and 5th columns
+ReducedColTrain = data.frame(Traincancer_data[, c(3,16,26,4,5)])
+ReducedColTest = data.frame(Testcancer_data[, c(3,16,26,4,5)])
+Header = c("TARGET_deathRate","AvgHouseholdSize","PctPrivateCoverage","incidenceRate","medIncome")
+#*****************************************************************************************
+PredictDeathRate = predict(ImprovedModel, newdata = ReducedColTest)
+#*****************************************************************************************
+# Idk why, but I can't make this work, 'PredictDeathRate' it should give me a length equal to
+#the length of columns of TestDataset which is 431, instead I'm keeping getting a 1723,
+#which is the size of Train. Because of that I cannot perform the cbind and the MAPE because R will try to
+#perform operations with vectors of different size.
+#*****************************************************************************************
+
+#We can compare the PredictDeathRate with actual DeathRate in the dataset
+#################Code with problems because of line 433, blocked by #
+
+#column binding is done by cbind()
+#cbind(Predicted = PredictDeathRate, Actual = Testcancer_data$TARGET_deathRate)
+#MAPE = (sum(abs((Testcancer_data$TARGET_deathRate - PredictDeathRate)/Testcancer_data$TARGET_deathRate)/nrow(Testcancer_data$TARGET_deathRate)))*100
+#MAPE
+```   
+
+
+# Checking MultiCollinearity
+
+#### We are going to follow 4 ways to check multicollinearity
+
+## 1. Using correlation between predictor variables
+
+```{r, echo = x}
+#corMatrix
+#This refers to example 1 (significant correlation) is handout 7.4
+# To check whether there are significant correlation between predictor variables, we use the cor() functions and pass only the predictor variables
+require(knitr)
+kable(cor(ReducedColTrain[ ,2:5]), digits = 3, caption = "Correlation Between Predictors")
+```
+
+### We see that (as expected) the 'medIncome' and 'PctPrivateCoverage' have a pretty high positive correlation with r values of 0.77 close to 1. So multicollinearity exists in the dataset and we need to drop one of these predictors. We can do that by creating separate models with one of those variables at the time and compering their respective AIC values, where smaller AIC is preferred.
+
+```{r, echo = x}
+#Model without 'medIncome'
+testModel1 = lm(Traincancer_data$TARGET_deathRate ~ Traincancer_data$AvgHouseholdSize +            Traincancer_data$PctPrivateCoverage + Traincancer_data$incidenceRate, data = Traincancer_data)
+#Model without 'PctPrivateCoverage'
+testModel2 = lm(Traincancer_data$TARGET_deathRate ~ Traincancer_data$AvgHouseholdSize +     Traincancer_data$incidenceRate + Traincancer_data$medIncome, data = Traincancer_data)
+AIC(testModel1)
+AIC(testModel2)
+```
+### AIC in testModel2, the one without the'PctPrivateCoverage' predictor variable, is smaller than AIC of testModel1, so we drop the 'PctPrivateCoverage' variable in the model
+
+
+## 2. Opposite signs in parameter estimates than what is expected
+```{r, echo = x}
+
 ```
