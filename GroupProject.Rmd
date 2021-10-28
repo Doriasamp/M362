@@ -477,13 +477,33 @@ kable(cor(ReducedColTrain[ ,2:5]), digits = 3, caption = "Correlation Between Pr
 testModel1 = lm(Traincancer_data$TARGET_deathRate ~ Traincancer_data$AvgHouseholdSize +            Traincancer_data$PctPrivateCoverage + Traincancer_data$incidenceRate, data = Traincancer_data)
 #Model without 'PctPrivateCoverage'
 testModel2 = lm(Traincancer_data$TARGET_deathRate ~ Traincancer_data$AvgHouseholdSize +     Traincancer_data$incidenceRate + Traincancer_data$medIncome, data = Traincancer_data)
+print("AIC for model without 'medIncome' , followed by 'PctPrivateCoverage' ")
 AIC(testModel1)
 AIC(testModel2)
+summary(testModel1)
+print(" **************************************************************** ")
+summary(testModel2)
 ```
 ### AIC in testModel2, the one without the'PctPrivateCoverage' predictor variable, is smaller than AIC of testModel1, so we drop the 'PctPrivateCoverage' variable in the model
 
 
 ## 2. Opposite signs in parameter estimates than what is expected
 ```{r, echo = x}
-
+#####################################################################################################
+#Do we need this part here since we have already performed the correlation test between variables?
+#####################################################################################################
 ```
+
+## 3. Using  the Variance Inflaction Factor, VIF.
+###We want VIF values less than 10 for each predictor variable.
+###At this point we have already discarded 'PctPrivateCoverage', but we want to make sure to check again the model by performing the VIF test
+```{r, echo = x}
+#We are going to use the testModel we use in the prior chunk. This is the new model without 'PctPrivateCoverage'
+#install the car package which has the VIF function.
+
+#Load the car package
+require(car)
+#To get the VIF values we need to pass the model into the vif() function
+kable(cbind(c("AvgHouseholdSize","incidenceRate","medIncome"), round(vif(testModel2),3)), digits = 3, row.names = 0, col.names = c("Predictors", "VIF"), align = "l")
+```
+###It looks like everything is good now, the VIF's are very low, we can say that now we have a dataset free from correlation between predictor variables.
